@@ -1,0 +1,45 @@
+{% extends 'myapp/base.html' %}
+
+{% block body_block %}
+    {% if message %}
+            <h3> {{ message }}</h3><br>
+            {% if request.user.is_anonymous %}
+                <a href="{% url 'myapp:login' %}">Login</a><br>
+                {% else %}
+            <a href="{% url 'myapp:logout' %}">Logout</a><br>
+                {% endif %}
+        <br>
+    {% else %}
+        <table>
+            <tr>
+                <td> First Name </td>
+                <td> : </td>
+                <td> {{ user.first_name }}</td>
+            </tr>
+            <tr>
+                <td> Last Name </td>
+                <td> : </td>
+                <td> {{ user.last_name }}</td>
+            </tr>
+            <tr>
+                <td> Interested in </td>
+                <td> : </td>
+                <td> {% for t in tops %}
+                        {{ t }} ,
+                     {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td> Registered in </td>
+                <td> : </td>
+                <td> {% for r in cors %}
+                        {{ r }} ,
+                     {% endfor %}
+                </td>
+            </tr>
+        </table>
+        <br>
+        <a href="{% url 'myapp:logout' %}">Logout</a>
+        <br><br>
+    {% endif %}
+{% endblock %}

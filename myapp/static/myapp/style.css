@@ -1,0 +1,22 @@
+.hbar1 {
+    display: inline;
+    margin: 15px;
+}
+body{
+    background-color: beige;
+}
+*{
+    font-family: calibri;
+}
+li{
+    margin:35px;
+}
+a{
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    background-color: darkblue;
+    border-radius: 10px;
+    outline: none;
+}
