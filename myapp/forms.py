@@ -1,5 +1,7 @@
 from django import forms
 from myapp.models import Order, Review
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 
 class SearchForm(forms.Form):
@@ -26,6 +28,36 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['reviewer', 'course', 'rating', 'comments']
-        widgets = {'course': forms.RadioSelect, }
-        labels = {'reviewer': u'Please enter a valid email', 'rating': 'Rating: An integer between 1(worst) and 5(best)'}
+        labels = {'reviewer': u'E-mail', 'rating': 'Rating'}
+        help_texts = {
+            'rating':'An integer between 1(worst) and 5(best)',
+        }
 
+
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+        widgets = {'password': forms.PasswordInput}
+        help_texts = {
+            'username': None,
+            'password': None,
+        }
+
+
+class RegisterForm(UserCreationForm):
+    firstname = forms.CharField(max_length=30, required=True)
+    lastname = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(max_length=254)
+
+    class Meta:
+        model = User
+        fields = ['username', 'firstname', 'lastname', 'email', 'password1', 'password2']
+        help_texts = {
+            'username': None,
+            'password1': None,
+            'password2': None,
+            'firstname': None,
+            'lastname': None,
+            'email': None,
+        }

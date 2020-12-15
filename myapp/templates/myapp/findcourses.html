@@ -1,10 +1,26 @@
 {% extends 'myapp/base.html' %}
 
 {% block body_block %}
+    <div class="main_body">
+    <center>
     <form action="{% url 'myapp:findcourses' %}" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <table>
+            <tr>
+                <td>Student Name</td>
+                <td>{{ form.Student_Name }}</td>
+            </tr>
+            <tr>
+                <td valign="top">Preferred Course Duration</td>
+                <td>{{ form.Preferred_course_duration }}</td>
+            </tr>
+            <tr>
+                <td>Maximum Price</td>
+                <td>{{ form.Maximum_price }}</td>
+            </tr>
+        </table>
         <input type="submit" name="submit1" value="Find Courses" />
     </form>
-
+        </center>
+    </div>
 {% endblock %}

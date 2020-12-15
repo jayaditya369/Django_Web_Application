@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
 
 from django.urls import reverse
@@ -7,18 +8,20 @@ from .models import Topic, Course, Student, Order
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import SearchForm, ReviewForm
+from .forms import SearchForm, ReviewForm, RegisterForm, LoginForm
 from .forms import OrderForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-
-
+from django.contrib.auth.models import User
+from django.views import View
 # Create your views here.
 
 
-def index(request):
-    top_list = Topic.objects.all().order_by('id')[:10]
-    return render(request, 'myapp/index.html', {'top_list': top_list, 'last_login': request.session.get('last_login', False)})
+class IndexView(View):
+
+    def get(self, request):
+        top_list = Topic.objects.all().order_by('id')[:10]
+        return render(request, 'myapp/index.html', {'top_list': top_list, 'last_login': request.session.get('last_login', False)})
     # response = HttpResponse()
     # heading1 = '<p>' + 'List of topics: ' + '</p>'
     # response.write(heading1)
@@ -51,10 +54,12 @@ def about(request):
     # return response
 
 
-def detail(request, topic_id):
-    topic = get_object_or_404(Topic, id=topic_id)
-    course_list = Course.objects.filter(topic=topic)
-    return render(request, 'myapp/detail.html', {'course_list': course_list, 'topic': topic})
+class DetailView(View):
+
+    def get(self, request, topic_id):
+        topic = get_object_or_404(Topic, id=topic_id)
+        course_list = Course.objects.filter(topic=topic)
+        return render(request, 'myapp/detail.html', {'course_list': course_list, 'topic': topic})
     # response = HttpResponse()
     # para = '<p><b>' + str(topic.name).upper() + '<br>' + 'Length: ' + str(topic.length) + '</b></p>'
     # response.write(para)
@@ -113,25 +118,32 @@ def place_order(request):
 
 
 def review(request):
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            rating = form.cleaned_data['rating']
-            if 1 <= rating <= 5:
-                review = form.save()
-                course = review.course
-                course.num_reviews += 1
-                course.save()
-                # return index(request)
-                return redirect('myapp:index')
-            else:
-                return render(request, 'myapp/review.html',
+    if request.user.is_authenticated:
+        sname = request.user.first_name
+        if Student.objects.filter(first_name=sname, level='UG') | Student.objects.filter(first_name=sname, level='PG'):
+            if request.method == 'POST':
+                form = ReviewForm(request.POST)
+                if form.is_valid():
+                    rating = form.cleaned_data['rating']
+                    if 1 <= rating <= 5:
+                        review = form.save()
+                        course = review.course
+                        course.num_reviews += 1
+                        course.save()
+                        # return index(request)
+                        return redirect('myapp:index')
+                    else:
+                        return render(request, 'myapp/review.html',
                               {'form': form, 'messege': 'You must enter a rating between 1 and 5!'})
+                else:
+                    return HttpResponse('Invalid data')
+            else:
+                form = ReviewForm()
+                return render(request, 'myapp/review.html', {'form': form})
         else:
-            return HttpResponse('Invalid data')
+            return HttpResponse('Login as Student with level Under Graduate or Post Graduate')
     else:
-        form = ReviewForm()
-        return render(request, 'myapp/review.html', {'form': form})
+        return render(request, 'myapp/login.html', {'message': 'Please Login First!', 'form': LoginForm()})
 
 
 def user_login(request):
@@ -144,13 +156,14 @@ def user_login(request):
                 login(request, user)
                 request.session['last_login'] = str(datetime.now().isoformat(',', 'seconds'))
                 request.session.set_expiry(3600)
-                return HttpResponseRedirect(reverse('myapp:index'))
+                return HttpResponseRedirect(reverse('myapp:my_account'))
             else:
                 return HttpResponse('Your account is disabled.')
         else:
             return HttpResponse('Invalid login details.')
     else:
-        return render(request, 'myapp/login.html')
+        form = LoginForm()
+        return render(request, 'myapp/login.html', {'form': form})
 
 
 @login_required
@@ -166,9 +179,54 @@ def my_account(request):
             if Student.objects.get(pk=sid):
                 user = get_object_or_404(Student, pk=sid)
                 tops = Student.objects.filter(id=sid).values_list("interested_in__name", flat=True)
+                topics = Topic.objects.filter(name=tops)
                 cors = Student.objects.filter(id=sid).values_list('registered_courses__title', flat=True)
-                return render(request, 'myapp/myaccount.html', {'user': user, 'tops': tops, 'cors': cors})
+                return render(request, 'myapp/myaccount.html', {'user': user, 'tops': tops, 'cors': cors, 'topics':topics})
         except:
             return render(request, 'myapp/myaccount.html', {'message': 'You are not a registered student! Please Login as Student!!'})
     else:
-        return render(request, 'myapp/myaccount.html', {'message': 'Please Login First!'})
+        message = 'Please Login First!'
+        return redirect(reverse('myapp:login'), {'message': message, 'form': LoginForm()})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        uid = request.POST['username']
+        psw = request.POST['password1']
+        em = request.POST['email']
+        if User.objects.filter(username=uid):
+            form1 = LoginForm()
+            return render(request, 'myapp/login.html', {'message': 'Username Already Exists! Please Login', 'form': form1})
+        elif form.is_valid():
+            new_user = User.objects.create_user(uid, em, psw)
+            new_user.first_name = request.POST['firstname']
+            new_user.last_name = request.POST['lastname']
+            new_user.save()
+            user = authenticate(username=uid, password=psw)
+            login(request, user)
+            return redirect('myapp:index')
+        else:
+            return HttpResponse('Invalid login details.')
+    else:
+        form = RegisterForm()
+        return render(request, 'myapp/register.html', {'form': form})
+
+
+def myorders(request):
+    if request.user.is_authenticated:
+        sid = request.user.id
+        sname = request.user.first_name
+        try:
+            if Student.objects.get(pk=sid):
+                ord = Order.objects.filter(student__first_name=sname)
+                if ord:
+                    return render(request, 'myapp/myorders.html', {'orders': ord, 'cors': cors})
+                else:
+                    message = 'There are 0 orders'
+                    return render(request, 'myapp/myorders.html', {'message': message})
+        except:
+                message = 'You are not a registered Student'
+                return render(request, 'myapp/myorders.html', {'message': message})
+    else:
+        return render(request, 'myapp/login.html', {'form': LoginForm()})

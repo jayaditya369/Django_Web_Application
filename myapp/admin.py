@@ -33,10 +33,20 @@ class TopicAdmin(admin.ModelAdmin):
     ]
 
 
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'level')
+    fields = [('registered_courses', 'interested_in')]
+
+
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('reviewer', 'course', 'rating')
+    fields = [('reviewer'), ('course', 'rating', 'date'), ('comments')]
+
+
 # Register your models here.
 admin.site.register(Topic, TopicAdmin)
 admin.site.register(Course, CourseAdmin)
-admin.site.register(Student)
+admin.site.register(Student, StudentAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Review)
+admin.site.register(Review, ReviewAdmin)
 

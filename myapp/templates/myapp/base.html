@@ -6,19 +6,28 @@
         <title>E-Learning WebApp - {% block title %} Welcome! {% endblock %}</title>
     </head>
     <body>
-        <div>
-            <h1>{% block myhdg %}Hello {{ request.user }} {% endblock %}</h1>
-            {% block body_block %}*** {% endblock %}
+        <div class="heading">
+            <h1 style="margin: 0px;font-weight: bold;">
+                    {% block myhdg %} Hello, {{ request.user.first_name }} {% endblock %}
+            </h1>
         </div>
-        <hr />
         <div>
-        	<ul>
-                <li class="hbar1"><a href="{% url 'myapp:index' %}">Main Page</a></li>
-                <li class="hbar1"><a href="{% url 'myapp:my_account' %}">My account</a></li>
-                <li class="hbar1"><a href="/myapp/about/">Find out about this site</a></li>
-                <li class="hbar1"><a href="/myapp/findcourses/">Find Courses</a></li>
+        	<ul class="list1">
+                <li class="hbar1 cstyle"><a href="{% url 'myapp:index' %}">Home</a></li>
+                <li class="hbar1 cstyle"><a href="{% url 'myapp:my_account' %}">My account</a></li>
+                <li class="hbar1 cstyle"><a href="{% url 'myapp:myorders' %}">My orders</a></li>
+                <li class="hbar1 cstyle"><a href="/myapp/findcourses/">Find Courses</a></li>
+                <li class="hbar1 cstyle"><a href="/myapp/about/">About</a></li>
+
+                {% if request.user.is_anonymous %}
+                    <li class="opts"><a href="{% url 'myapp:login' %}" >Login</a></li>
+                    <li class="opts"><a href="{% url 'myapp:register' %}" >Register Here</a></li>
+                {% else %}
+                    <li class="opts"><a href="{% url 'myapp:logout' %}" >Logout</a></li>
+                {% endif %}
             </ul>
         </div>
+    {% block body_block %} *** {% endblock %}
     </body>
 </html>
 

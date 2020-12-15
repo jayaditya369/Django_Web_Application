@@ -3,11 +3,16 @@
     Details Page
 {% endblock %}
 {% block body_block %}
-    <h2><b>{{ topic.name }} &emsp; Length: {{ topic.length }} </b></h2>
-    <h3><b>List of available courses:</b></h3>
+
+
+    <div class="main_body">
+    <center>
+    <h1 class="sub-head"><b>{{ topic.name }} &emsp; Length: {{ topic.length }} </b></h1></center>
+    <h1><b>List of available courses:</b></h1>
     <ol>
     {% for course in course_list %}
-        <li>{{ course.title }}</li>
+        <li class="cstyle">{{ course.title }}</li>
     {% endfor %}
     </ol>
+    </div>
 {% endblock %}

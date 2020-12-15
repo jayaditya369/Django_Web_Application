@@ -1,15 +1,13 @@
 {% extends 'myapp/base.html' %}
 
 {% block body_block %}
+
+    <div class="main_body">
     {% if message %}
-            <h3> {{ message }}</h3><br>
-            {% if request.user.is_anonymous %}
-                <a href="{% url 'myapp:login' %}">Login</a><br>
-                {% else %}
-            <a href="{% url 'myapp:logout' %}">Logout</a><br>
-                {% endif %}
+            <h1> {{ message }}</h1><br>
         <br>
     {% else %}
+        <center>
         <table>
             <tr>
                 <td> First Name </td>
@@ -22,24 +20,25 @@
                 <td> {{ user.last_name }}</td>
             </tr>
             <tr>
-                <td> Interested in </td>
-                <td> : </td>
+                <td valign="top"> Interested in </td>
+                <td valign="top"> : </td>
                 <td> {% for t in tops %}
-                        {{ t }} ,
+                    {{ t }} <br>
                      {% endfor %}
                 </td>
             </tr>
             <tr>
-                <td> Registered in </td>
-                <td> : </td>
+                <td valign="top"> Registered in </td>
+                <td valign="top"> : </td>
                 <td> {% for r in cors %}
-                        {{ r }} ,
+                        {{ r }} <br>
                      {% endfor %}
                 </td>
             </tr>
         </table>
-        <br>
-        <a href="{% url 'myapp:logout' %}">Logout</a>
+        </center>
         <br><br>
     {% endif %}
+    </div>
+
 {% endblock %}

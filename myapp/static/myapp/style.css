@@ -1,22 +1,136 @@
-.hbar1 {
-    display: inline;
-    margin: 15px;
+
+.right{
+    position: relative;
+    right:0;
 }
 body{
     background-color: beige;
+    margin-left: 0px;
+    overflow-x: hidden;
+}
+.nopt{
+    list-style-type: none;
+    position: absolute;
+    right: 0;
+    top:0;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.opts{
+    list-style-type: none;
+    float: right;
+    position: relative;
+    top: -70px;
+    margin-right: 15px;
+    padding: 10px;
+    background-color: #000066;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.main_body
+{
+    position: relative;
+    left:40px;
+    font-size: 20px;
+}
+.main_body ul{
+    list-style-type: none;
+}
+.heading
+{
+    position: relative;
+    left: 40px;
+    font-weight: bolder;
+    margin-bottom: 5px;
+}
+.sub-head{
+    background-color: black;
+    color: white;
+    width: max-content;
+    padding: 10px;
+    cursor: pointer;
 }
 *{
     font-family: calibri;
 }
-li{
-    margin:35px;
+.list1{
+    background-color: #000066;
+    padding: 15px;
+    width:100%;
 }
-a{
+.hbar1 {
+    display: inline;
+    /*margin: 15px;*/
+}
+.cstyle {
+    font-size: 25px;
+    font-weight: bold;
+    padding: 15px;
+    background-color: #000066;
+    width: 90vw;
+    color: beige;
+    cursor: pointer;
+}
+.cstyle:hover{
+    background-color: black;
+}
+.active{
+    background-color: black;
+}
+li a{
     text-decoration: none;
     color: white;
-    padding: 10px;
-    margin: 5px;
-    background-color: darkblue;
-    border-radius: 10px;
+    font-size: 25px;
+}
+ol{
+    background-color: black;
+    color: beige;
+    font-size: 25px;
+    font-weight: bold;
+    width:max-content;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="textarea"]
+{
+    padding: 5px;
     outline: none;
+    vertical-align: middle;
+    width:95%;
+}
+
+input[type="submit"]
+{
+    padding: 8px;
+    font-size: 18px;
+    outline: none;
+    cursor: pointer;
+    background-color: #000066;
+    border-radius: 3px;
+    color: white;
+}
+.link{
+    font-size: 18px;
+    color: black;
+}
+
+table{
+    font-size: 25px;
+    margin-bottom: 10px;
+    box-shadow: 2px 2px 5px;
+}
+td, th{
+    background-color: antiquewhite;
+    padding: 10px;
+    padding-right: 20px;
+    width:max-content;
+}
+td ul{
+    margin:0px;
+    padding: 5px;
+}
+.text{
+    vertical-align: top;
 }
